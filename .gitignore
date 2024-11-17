@@ -1,0 +1,42 @@
+# Fichiers et dossiers générés par Maven
+/target/
+*.war
+*.jar
+
+# Fichiers de logs
+logs/
+*.log
+*.tmp
+
+# Configuration spécifique à l'environnement
+*.env
+
+# Fichiers système et de configuration
+.DS_Store
+Thumbs.db
+
+# Dossiers et fichiers des IDE
+### IntelliJ IDEA ###
+.idea/
+*.iml
+
+### Eclipse ###
+.project
+.classpath
+.settings/
+
+### VS Code ###
+.vscode/
+
+# Cache et fichiers temporaires Java
+*.class
+*.swp
+*.swo
+*.~*
+*.bak
+
+# Configuration spécifique à Spring Boot
+spring.log
+
+# Fichiers de test générés
+/test-output/
