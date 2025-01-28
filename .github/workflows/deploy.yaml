@@ -42,15 +42,18 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '17'
+
+      - name: Install Maven
+        run: sudo apt-get install -y maven
 
       - name: Run Integration Tests
         run: |
-          ./mvnw verify
+          mvn verify
 
   # Step 3: Perform Security Tests
   security-tests:
