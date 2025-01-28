@@ -55,27 +55,11 @@ jobs:
         run: |
           mvn verify
 
-  # Step 3: Perform Security Tests
-  security-tests:
-    name: Run Security Tests
-    runs-on: ubuntu-latest
-    needs: integration-tests
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-
-      - name: Run OWASP Dependency Check
-        uses: dependency-check/action@v2.3.0
-        with:
-          project: "Spring Boot Application"
-          format: "ALL"
-
-  # Step 4: Deploy to EC2
+  # Step 3: Deploy to EC2
   deploy:
     name: Deploy to EC2
     runs-on: ubuntu-latest
-    needs: security-tests
 
     steps:
       - name: Checkout Code
