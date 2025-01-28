@@ -1,0 +1,93 @@
+name: CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # Step 1: Run Unit Tests
+  unit-tests:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Run Unit Tests
+        run: |
+          ./mvnw test
+
+  # Step 2: Run Integration Tests
+  integration-tests:
+    name: Run Integration Tests
+    runs-on: ubuntu-latest
+    needs: unit-tests
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Run Integration Tests
+        run: |
+          ./mvnw verify
+
+  # Step 3: Perform Security Tests
+  security-tests:
+    name: Run Security Tests
+    runs-on: ubuntu-latest
+    needs: integration-tests
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Run OWASP Dependency Check
+        uses: dependency-check/action@v2.3.0
+        with:
+          project: "Spring Boot Application"
+          format: "ALL"
+
+  # Step 4: Deploy to EC2
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    needs: security-tests
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Deploy Application
+        env:
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          HOSTNAME: ${{ secrets.SSH_HOST }}
+          USER_NAME: ${{ secrets.USER_NAME }}
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+              cd /path/to/application &&
+              git checkout main &&
+              git fetch --all &&
+              git reset --hard origin/main &&
+              git pull origin main &&
+              ./mvnw clean package &&
+              pkill -f "java -jar" || true &&
+              nohup java -jar target/*.jar > app.log 2>&1 &
+          '
