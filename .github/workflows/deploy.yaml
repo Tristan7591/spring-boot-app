@@ -73,7 +73,7 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-              cd /path/to/application &&
+              cd /home/admin/my-app &&
               git checkout main &&
               git fetch --all &&
               git reset --hard origin/main &&
