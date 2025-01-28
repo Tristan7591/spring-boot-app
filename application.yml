@@ -7,3 +7,6 @@ management:
     export:
       prometheus:
         enabled: true  
+logging:
+  file:
+    name: /var/log/my-app/my-app.log
