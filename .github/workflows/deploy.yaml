@@ -78,7 +78,7 @@ jobs:
               git fetch --all &&
               git reset --hard origin/main &&
               git pull origin main &&
-              ./mvnw clean package &&
+              ./mvn clean package &&
               pkill -f "java -jar" || true &&
               nohup java -jar target/*.jar > app.log 2>&1 &
           '
